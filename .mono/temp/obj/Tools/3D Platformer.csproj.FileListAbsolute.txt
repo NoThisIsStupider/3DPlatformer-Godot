@@ -1,0 +1,6 @@
+C:\Users\joshu\Projects\3DPlatformer\.mono\temp\bin\Tools\3D Platformer.dll
+C:\Users\joshu\Projects\3DPlatformer\.mono\temp\bin\Tools\3D Platformer.pdb
+C:\Users\joshu\Projects\3DPlatformer\.mono\temp\obj\Tools\3D Platformer.csprojAssemblyReference.cache
+C:\Users\joshu\Projects\3DPlatformer\.mono\temp\obj\Tools\3D Platformer.csproj.CoreCompileInputs.cache
+C:\Users\joshu\Projects\3DPlatformer\.mono\temp\obj\Tools\3D Platformer.dll
+C:\Users\joshu\Projects\3DPlatformer\.mono\temp\obj\Tools\3D Platformer.pdb
