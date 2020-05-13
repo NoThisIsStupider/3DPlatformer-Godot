@@ -3,10 +3,14 @@ using System;
 
 public class Player : KinematicBody
 {
-    Spatial cameraBase;
-    float velocityY = 0;
+    public Spatial cameraBase;
+    public Vector2 moveInput;
+    public Vector3 moveInputYRotated;
 
-    Vector2 MOUSE_LOOK_SPEED = new Vector2(0.0025f, 0.0025f);
+    public Vector3 velocity = new Vector3();
+
+    [Export] public Vector2 MOUSE_LOOK_SPEED = new Vector2(0.0025f, 0.0025f);
+    [Export] public float GRAVITY = 0.98f;
 
     public override void _Ready()
     {
@@ -41,31 +45,20 @@ public class Player : KinematicBody
         }
     }
 
-    private Vector2 CalculateNormalizedMoveInput()
+    public void CalculateNormalizedMoveInput()
     {
-        Vector2 input;
-        input.x = (Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left"));
-	    input.y = (Input.GetActionStrength("move_down") - Input.GetActionStrength("move_up"));
-        input = input.Normalized();
-        return input;
+        moveInput.x = (Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left"));
+	    moveInput.y = (Input.GetActionStrength("move_down") - Input.GetActionStrength("move_up"));
+        moveInput = moveInput.Normalized();
     }
 
-    public override void _PhysicsProcess(float delta)
+    public void CalculateMoveInputRelativeToYRot()
     {
-        Vector2 input = CalculateNormalizedMoveInput();
-        velocityY -= 0.98f;
-        if (Input.IsActionJustPressed("ui_select"))
-        {
-            velocityY += 30;
-        }
+        moveInputYRotated = new Vector3(moveInput.x, 0, moveInput.y).Rotated(Vector3.Up, Rotation.y);
+    }
 
-        Vector3 velocity = new Vector3(input.x * 15, velocityY, input.y * 15).Rotated(Vector3.Up, Rotation.y);
-
-        MoveAndSlideWithSnap(velocity, Vector3.Down, Vector3.Up, true);
-
-        if (IsOnFloor())
-        {
-            velocityY = 0;
-        }
+    public void ApplyGravity()
+    {
+        velocity.y -= GRAVITY;
     }
 }

@@ -1,19 +1,22 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Player.cs" type="Script" id=1]
+[ext_resource path="res://PlayerFSM.cs" type="Script" id=2]
 
-[sub_resource type="CapsuleShape" id=1]
-radius = 0.483713
-height = 0.517384
+[sub_resource type="BoxShape" id=3]
+extents = Vector3( 0.405564, 0.403464, 0.706186 )
 
 [sub_resource type="CapsuleMesh" id=2]
 
 [node name="Player" type="KinematicBody"]
 script = ExtResource( 1 )
 
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource( 2 )
+
 [node name="CollisionShape" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, -1.62921e-07, 1, 0, -1, -1.62921e-07, 0.00449324, 0.732599, 0 )
-shape = SubResource( 1 )
+shape = SubResource( 3 )
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
 transform = Transform( 0.5, 0, 0, 0, -2.18557e-08, 0.5, 0, -0.5, -2.18557e-08, 0, 0.737691, 0 )
