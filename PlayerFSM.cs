@@ -5,7 +5,7 @@ using Godot;
 public class PlayerFSM : StateMachine
 {
     public Player player = null;
-    bool disableGroundSnap = false;
+    bool doGroundSnap = false;
 
     enum States
     {
@@ -26,20 +26,41 @@ public class PlayerFSM : StateMachine
         player.CalculateMoveInputRelativeToYRot();
         player.ApplyGravity();
 
-        player.velocity = new Vector3(player.moveInputYRotated.x * 15, player.velocity.y, player.moveInputYRotated.z * 15);
-        if (player.velocity.y < 0)
+        //https://github.com/godotengine/godot/issues/34117
+        //Not super clean but basically this ensures the velocity is actually 0 when slow enough so slope stopping works
+        if (Mathf.Abs(player.velocity.x) < 1)
         {
-            disableGroundSnap = false;
+            player.velocity.x = 0;
+        }
+        if (Mathf.Abs(player.velocity.z) < 1)
+        {
+            player.velocity.z = 0;
+        }
+        //keeping the y velocity above 0.5f on the ground makes it so the speed on slopes feels uniform instead of you accelerating downhill
+        if (CheckForState(States.Stand, States.Walk) && player.velocity.y < -0.5f)
+        {
+            player.velocity.y = -0.5f;
         }
 
+        //apply horizontal velocity using lerp to basically simulate friction and such
+        player.velocity.x = Mathf.Lerp(player.velocity.x, player.moveInputYRotated.x * player.MOVE_SPEED, 0.2f);
+        player.velocity.z = Mathf.Lerp(player.velocity.z, player.moveInputYRotated.z * player.MOVE_SPEED, 0.2f);
+
+        //re-enable ground snapping when moving down, so that when you fall after jumping ground snapping will be enabled when you land
+        if (player.velocity.y < 0)
+        {
+            doGroundSnap = true;
+        }
+
+        
         if (CheckForState(States.Stand, States.Walk))
         {
-            player.velocity = player.MoveAndSlideWithSnap(player.velocity, (!disableGroundSnap) ? Vector3.Down / 5 : Vector3.Zero, Vector3.Up, true);
+            player.velocity = player.MoveAndSlideWithSnap(player.velocity, (doGroundSnap) ? Vector3.Down / 5 : Vector3.Zero, Vector3.Up, true);
 
             if (Input.IsActionJustPressed("ui_select"))
             {
                 player.velocity.y = 20;
-                disableGroundSnap = true;
+                doGroundSnap = false;
             }
         }
         else if ((States)currentState == States.Jump)
@@ -84,14 +105,14 @@ public class PlayerFSM : StateMachine
 
     public override void _EnterState(object newState, object oldState)
     {
-        switch ((States) currentState)
+        switch ((States)currentState)
         {
         }
     }
 
     public override void _ExitState(object oldState, object newState)
     {
-        switch ((States) currentState)
+        switch ((States)currentState)
         {
         }
     }

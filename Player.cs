@@ -11,6 +11,7 @@ public class Player : KinematicBody
 
     [Export] public Vector2 MOUSE_LOOK_SPEED = new Vector2(0.0025f, 0.0025f);
     [Export] public float GRAVITY = 0.98f;
+    [Export] public float MOVE_SPEED = 12;
 
     public override void _Ready()
     {
